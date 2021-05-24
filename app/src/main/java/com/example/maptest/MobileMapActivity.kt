@@ -13,6 +13,7 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.CircleOverlay
 import com.naver.maps.map.overlay.PolygonOverlay
+import com.naver.maps.map.overlay.PolylineOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import org.json.JSONObject
 import kotlin.math.roundToInt
@@ -53,15 +54,14 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
         val am = resources.assets
-        val inputStream= am.open("TL_SCCO_CTPRVN.json")
-        val jsonString = inputStream.bufferedReader().use { it.readText() }
-        val jObject = JSONObject(jsonString)
-        val jsonlist = jObject.getJSONArray("features")
+
         val geocoder = Geocoder(this)
         val uiSettings = naverMap.uiSettings
         val projection = naverMap.projection
+
         //val circle = CircleOverlay()
         val polygon = PolygonOverlay()
+        //val polyline = PolylineOverlay()
 
         naverMap.locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         uiSettings.isLocationButtonEnabled = true
@@ -85,25 +85,40 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             val addressRegex = "[0-9-]".toRegex()
             val regexedAddress : String = addressRegex.replace(address.getAddressLine(0),"")
             val regexedAddressList : ArrayList<String> = regexedAddress.split(" ") as ArrayList<String>
+
+            var inputStream= am.open("TL_SCCO_CTPRVN.json")
+            var findName : String = "CTP_KOR_NM"
+
             regexedAddressList.removeAt(0)
             if (regexedAddressList[regexedAddressList.size - 1].isEmpty()) {
                 regexedAddressList.removeAt(regexedAddressList.size - 1)
             }
-            val mapString = if (metersPerPixel < 5) {
-                regexedAddressList[0] + " " + regexedAddressList[1] + " " + regexedAddressList[2]
-            } else if (metersPerPixel < 40) {
-                regexedAddressList[0] + " " + regexedAddressList[1]
-            } else {
-                regexedAddressList[0]
+            var mapString : String = ""
+//            if (metersPerPixel < 5) {
+//                mapString = regexedAddressList[2]
+//
+//            }
+            if (metersPerPixel < 40) {
+                mapString = regexedAddressList[1]
+                inputStream= am.open("TL_SCCO_SIG.json")
+                findName = "SIG_KOR_NM"
             }
+            else {
+                mapString = regexedAddressList[0]
+
+            }
+
+            val jsonString = inputStream.bufferedReader().use { it.readText() }
+            val jObject = JSONObject(jsonString)
+            val jsonlist = jObject.getJSONArray("features")
 
             val jsonObjectCoordinatesList : ArrayList<String>
             for (i in 0 until jsonlist.length()) {
                 val jsonObject = jsonlist.getJSONObject(i)
                 val jsonObjectProperties = jsonObject.getJSONObject("properties")
-                val jsonObjectPropertiesNameKor = jsonObjectProperties.getString("CTP_KOR_NM")
+                val jsonObjectPropertiesNameKor = jsonObjectProperties.getString("$findName")
                 val jsonObjectGeometry = jsonObject.getJSONObject("geometry")
-                if (regexedAddressList[0] == jsonObjectPropertiesNameKor) {
+                if (mapString == jsonObjectPropertiesNameKor) {
                     var jsonObjectCoordinates = jsonObjectGeometry.getString("coordinates")
                     val jsonRegex = "[\\[\\]]".toRegex()
                     jsonObjectCoordinates = jsonRegex.replace(jsonObjectCoordinates,"")
@@ -111,16 +126,15 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
                     var index = 0
                     while(index < jsonObjectCoordinatesList.size) {
-                        jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[i].toDouble(),
-                            jsonObjectCoordinatesList[i + 1].toDouble()))
+                        jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[index + 1].toDouble(),
+                            jsonObjectCoordinatesList[index].toDouble()))
                         index += 2
                     }
                     polygon.coords = jsonObjectLatLngList
+
                     Toast.makeText(this,
-                        "${(coord.latitude * 1000).roundToInt() / 1000f}\n" +
-                                "${(coord.longitude * 1000).roundToInt() / 1000f}" +
-                                "\n$mapString\n$jsonObjectPropertiesNameKor" +
-                                "\nindex = $index\nsize = ${jsonObjectLatLngList.size}"
+                        "lat = ${(coord.latitude * 1000).roundToInt() / 1000f}\n" +
+                                "long = ${(coord.longitude * 1000).roundToInt() / 1000f}\n$mapString"
                         , Toast.LENGTH_SHORT).show()
                     //circle.center = LatLng(coord.latitude, coord.longitude)
                     break
@@ -134,7 +148,7 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             //circle.outlineColor = Color.argb(100,25, 50, 102)
             //circle.outlineWidth = 5
             //circle.map = naverMap
-            //polygon.color = Color.argb(50, 65, 105, 225)
+            polygon.color = Color.argb(40, 65, 105, 225)
             polygon.map = naverMap
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
