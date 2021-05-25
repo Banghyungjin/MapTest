@@ -18,6 +18,9 @@
         </activity>
         <activity android:name=".MobileMapActivity" />
 
+
+        <activity android:name=".MobileMapActivityTest" />
+
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="0l2mcc3fx2" />
