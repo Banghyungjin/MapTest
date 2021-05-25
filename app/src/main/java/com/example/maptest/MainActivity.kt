@@ -15,12 +15,12 @@ class MainActivity : AppCompatActivity() {
 
         val mobile : Button = findViewById(R.id.mobileMap)
         mobile.setOnClickListener {
-            val nextIntent = Intent(this, MobileMapActivity::class.java)
+            val nextIntent = Intent(this, MobileMapActivityTest::class.java)
             startActivity(nextIntent)
         }
         val web : Button = findViewById(R.id.webMap)
         web.setOnClickListener {
-            val nextIntent2 = Intent(this, MobileMapActivityTest::class.java)
+            val nextIntent2 = Intent(this, WebMapActivity::class.java)
             //val nextIntent2 = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://map?&appname=com.example.maptest"))
             startActivity(nextIntent2)
         }

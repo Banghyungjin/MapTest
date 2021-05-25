@@ -94,18 +94,16 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 regexedAddressList.removeAt(regexedAddressList.size - 1)
             }
             var mapString : String = ""
-//            if (metersPerPixel < 5) {
-//                mapString = regexedAddressList[2]
-//
-//            }
-            if (metersPerPixel < 40) {
+            if (metersPerPixel < 5) {
+                mapString = regexedAddressList[0]+ regexedAddressList[1]+ regexedAddressList[2]
+            }
+            else if (metersPerPixel < 40) {
                 mapString = regexedAddressList[1]
                 inputStream= am.open("TL_SCCO_SIG.json")
                 findName = "SIG_KOR_NM"
             }
             else {
                 mapString = regexedAddressList[0]
-
             }
 
             val jsonString = inputStream.bufferedReader().use { it.readText() }
@@ -113,43 +111,43 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             val jsonlist = jObject.getJSONArray("features")
 
             val jsonObjectCoordinatesList : ArrayList<String>
-            for (i in 0 until jsonlist.length()) {
-                val jsonObject = jsonlist.getJSONObject(i)
-                val jsonObjectProperties = jsonObject.getJSONObject("properties")
-                val jsonObjectPropertiesNameKor = jsonObjectProperties.getString("$findName")
-                val jsonObjectGeometry = jsonObject.getJSONObject("geometry")
-                if (mapString == jsonObjectPropertiesNameKor) {
-                    var jsonObjectCoordinates = jsonObjectGeometry.getString("coordinates")
-                    val jsonRegex = "[\\[\\]]".toRegex()
-                    jsonObjectCoordinates = jsonRegex.replace(jsonObjectCoordinates,"")
-                    jsonObjectCoordinatesList = jsonObjectCoordinates.split(",") as ArrayList<String>
-                    val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
-                    var index = 0
-                    while(index < jsonObjectCoordinatesList.size) {
-                        jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[index + 1].toDouble(),
-                            jsonObjectCoordinatesList[index].toDouble()))
-                        index += 2
-                    }
-                    polygon.coords = jsonObjectLatLngList
+//            for (i in 0 until jsonlist.length()) {
+//                val jsonObject = jsonlist.getJSONObject(i)
+//                val jsonObjectProperties = jsonObject.getJSONObject("properties")
+//                val jsonObjectPropertiesNameKor = jsonObjectProperties.getString("$findName")
+//                val jsonObjectGeometry = jsonObject.getJSONObject("geometry")
+//                if (mapString == jsonObjectPropertiesNameKor) {
+//                    var jsonObjectCoordinates = jsonObjectGeometry.getString("coordinates")
+//                    val jsonRegex = "[\\[\\]]".toRegex()
+//                    jsonObjectCoordinates = jsonRegex.replace(jsonObjectCoordinates,"")
+//                    jsonObjectCoordinatesList = jsonObjectCoordinates.split(",") as ArrayList<String>
+//                    val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
+//                    var index = 0
+//                    while(index < jsonObjectCoordinatesList.size) {
+//                        jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[index + 1].toDouble(),
+//                            jsonObjectCoordinatesList[index].toDouble()))
+//                        index += 2
+//                    }
+//                    polygon.coords = jsonObjectLatLngList
+//
+//                    Toast.makeText(this,
+//                        "lat = ${(coord.latitude * 1000).roundToInt() / 1000f}\n" +
+//                                "long = ${(coord.longitude * 1000).roundToInt() / 1000f}\n$mapString"
+//                        , Toast.LENGTH_SHORT).show()
+//                    //circle.center = LatLng(coord.latitude, coord.longitude)
+//                    break
+//                }
+//            }
 
-                    Toast.makeText(this,
-                        "lat = ${(coord.latitude * 1000).roundToInt() / 1000f}\n" +
-                                "long = ${(coord.longitude * 1000).roundToInt() / 1000f}\n$mapString"
-                        , Toast.LENGTH_SHORT).show()
-                    //circle.center = LatLng(coord.latitude, coord.longitude)
-                    break
-                }
-            }
-
-            //Toast.makeText(this, final_text, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, mapString, Toast.LENGTH_LONG).show()
 
             //circle.radius = metersPerPixel * 300
             //circle.color = Color.argb(50, 65, 105, 225)
             //circle.outlineColor = Color.argb(100,25, 50, 102)
             //circle.outlineWidth = 5
             //circle.map = naverMap
-            polygon.color = Color.argb(40, 65, 105, 225)
-            polygon.map = naverMap
+//            polygon.color = Color.argb(40, 65, 105, 225)
+//            polygon.map = naverMap
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
     }
