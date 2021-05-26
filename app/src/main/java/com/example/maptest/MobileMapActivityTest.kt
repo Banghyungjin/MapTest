@@ -166,9 +166,6 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                     }
                 }
             }
-
-
-
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
     }
