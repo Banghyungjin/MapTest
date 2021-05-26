@@ -87,7 +87,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                 val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0]    // 좌표로 지역 명을 가져옴
                 val addressRegex = "[0-9-]".toRegex()   // 지역 명에서 숫자 삭제
                 val regexedAddress : String = addressRegex.replace(address.getAddressLine(0),"")
-                if (regexedAddress != "대한민국") {
+                if (regexedAddress != "대한민국" && regexedAddress.contains("대한민국".toRegex())) { // 지역값이 충분하지 않은 것 걸러냄
+                    //Toast.makeText(this, regexedAddress, Toast.LENGTH_SHORT).show()  // 폴리곤 리스트에 있는 폴리곤 전부 표시\
                     val regexedAddressList : ArrayList<String> = regexedAddress.split(" ") as ArrayList<String>
                     if (regexedAddressList.size > 1) {  // 광역시도 부분이 없는 경우 걸러냄
                         val nationString : String = regexedAddressList[0]   // 지역 국가명 가져옴
