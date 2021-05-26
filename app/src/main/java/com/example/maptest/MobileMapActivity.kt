@@ -76,8 +76,16 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
         naverMap.setOnMapClickListener{ point, coord ->
-            //circle.map = null
-            polygon.map = null
+            val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0].getAddressLine(0)
+//            val regexedAddressList : ArrayList<String> = address.split(" ") as ArrayList<String>
+//            if (regexedAddressList.size > 1) {
+//                val mapString : String = regexedAddressList[1]
+//
+//            }
+            Toast.makeText(this,
+                "lat = ${(coord.latitude * 1000).roundToInt() / 1000f}\n" +
+                        "long = ${(coord.longitude * 1000).roundToInt() / 1000f}\n$address"
+                , Toast.LENGTH_SHORT).show()
         }
         naverMap.setOnMapLongClickListener { point, coord ->
             val metersPerPixel = projection.metersPerPixel

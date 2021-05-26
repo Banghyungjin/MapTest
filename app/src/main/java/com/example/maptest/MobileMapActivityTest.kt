@@ -55,9 +55,9 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
         val am = resources.assets
         val geocoder = Geocoder(this)
         val uiSettings = naverMap.uiSettings
-        val projection = naverMap.projection
+//        val projection = naverMap.projection
         var multiPolygonArray : ArrayList<PolygonOverlay> = arrayListOf<PolygonOverlay>()
-        var counter = true
+//        var counter = true
         naverMap.locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         uiSettings.isLocationButtonEnabled = true
         naverMap.isIndoorEnabled = true
@@ -84,82 +84,92 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                 multiPolygonArray = arrayListOf<PolygonOverlay>()
             }
 
-            val metersPerPixel = projection.metersPerPixel
+//            val metersPerPixel = projection.metersPerPixel
             val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0]
             val addressRegex = "[0-9-]".toRegex()
             val regexedAddress : String = addressRegex.replace(address.getAddressLine(0),"")
             val regexedAddressList : ArrayList<String> = regexedAddress.split(" ") as ArrayList<String>
-            val mapString : String = regexedAddressList[1]
-            val inputStream= am.open("${mapString}_변환.json")
-            val findName : String = "CTP_KOR_NM"
-            val jsonString = inputStream.bufferedReader().use { it.readText() }
-            val jObject = JSONObject(jsonString)
-            val jsonlist = jObject.getJSONArray("features")
-            var jsonObjectCoordinatesList : ArrayList<String>
-            regexedAddressList.removeAt(0)
-            if (regexedAddressList[regexedAddressList.size - 1].isEmpty()) {
-                regexedAddressList.removeAt(regexedAddressList.size - 1)
-            }
-            for (i in 0 until jsonlist.length()) {
-                val jsonObject = jsonlist.getJSONObject(i)
-                val jsonObjectProperties = jsonObject.getJSONObject("properties")
-                val jsonObjectPropertiesNameKor = jsonObjectProperties.getString(findName)
-                val jsonObjectGeometry = jsonObject.getJSONObject("geometry")
-                val jsonRegex = "[\\[\\]]".toRegex()
-                if (mapString == jsonObjectPropertiesNameKor) {
-                    if (jsonObjectGeometry.getString("coordinates").contains("]]],")) {
-                        val multiPolyList: ArrayList<String> = jsonObjectGeometry.getString("coordinates").split("]]],") as ArrayList<String>
-                        for (j in multiPolyList) {
-                            val jsonObjectCoordinates = jsonRegex.replace(j,"")
-                            jsonObjectCoordinatesList = jsonObjectCoordinates.split(",") as ArrayList<String>
-                            val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
-                            var index = 0
-                            while(index < jsonObjectCoordinatesList.size) {
-                                jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[index + 1].toDouble(),
-                                    jsonObjectCoordinatesList[index].toDouble()))
-                                index += 2
-                            }
-                            val polygon = PolygonOverlay()
-                            polygon.coords = jsonObjectLatLngList
-                            if (mapString == "전라남도" && jsonObjectLatLngList.size > 1000) {
-                                val holeCoordinates = jsonRegex.replace(jsonObjectGeometry.getString("holes"),"")
-                                val holeCoordinatesList = holeCoordinates.split(",") as ArrayList<String>
-                                val holeLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
-                                var holeIndex = 0
-                                while(holeIndex < holeCoordinatesList.size) {
-                                    holeLatLngList.add(LatLng(holeCoordinatesList[holeIndex + 1].toDouble(),
-                                        holeCoordinatesList[holeIndex].toDouble()))
-                                    holeIndex += 2
+            if (regexedAddressList.size > 1) {
+                val nationString : String = regexedAddressList[0]
+                if (nationString == "대한민국") {
+                    val mapString : String = regexedAddressList[1]
+                    val inputStream= am.open("${mapString}_변환.json")
+                    val findName = "CTP_KOR_NM"
+                    val jsonString = inputStream.bufferedReader().use { it.readText() }
+                    val jObject = JSONObject(jsonString)
+                    val jsonlist = jObject.getJSONArray("features")
+                    var jsonObjectCoordinatesList : ArrayList<String>
+                    regexedAddressList.removeAt(0)
+                    if (regexedAddressList[regexedAddressList.size - 1].isEmpty()) {
+                        regexedAddressList.removeAt(regexedAddressList.size - 1)
+                    }
+
+                    if (mapString.contains("[시도]".toRegex())) {
+                        for (i in 0 until jsonlist.length()) {
+                            val jsonObject = jsonlist.getJSONObject(i)
+                            val jsonObjectProperties = jsonObject.getJSONObject("properties")
+                            val jsonObjectPropertiesNameKor = jsonObjectProperties.getString(findName)
+                            val jsonObjectGeometry = jsonObject.getJSONObject("geometry")
+                            val jsonRegex = "[\\[\\]]".toRegex()
+                            if (mapString == jsonObjectPropertiesNameKor) {
+                                if (jsonObjectGeometry.getString("coordinates").contains("]]],")) {
+                                    val multiPolyList: ArrayList<String> = jsonObjectGeometry.getString("coordinates").split("]]],") as ArrayList<String>
+                                    for (j in multiPolyList) {
+                                        val jsonObjectCoordinates = jsonRegex.replace(j,"")
+                                        jsonObjectCoordinatesList = jsonObjectCoordinates.split(",") as ArrayList<String>
+                                        val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
+                                        var index = 0
+                                        while(index < jsonObjectCoordinatesList.size) {
+                                            jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[index + 1].toDouble(),
+                                                jsonObjectCoordinatesList[index].toDouble()))
+                                            index += 2
+                                        }
+                                        val polygon = PolygonOverlay()
+                                        polygon.coords = jsonObjectLatLngList
+                                        if (mapString == "전라남도" && jsonObjectLatLngList.size > 1000) {
+                                            val holeCoordinates = jsonRegex.replace(jsonObjectGeometry.getString("holes"),"")
+                                            val holeCoordinatesList = holeCoordinates.split(",") as ArrayList<String>
+                                            val holeLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
+                                            var holeIndex = 0
+                                            while(holeIndex < holeCoordinatesList.size) {
+                                                holeLatLngList.add(LatLng(holeCoordinatesList[holeIndex + 1].toDouble(),
+                                                    holeCoordinatesList[holeIndex].toDouble()))
+                                                holeIndex += 2
+                                            }
+                                            polygon.holes = listOf(holeLatLngList)
+                                        }
+                                        multiPolygonArray.add(polygon)
+                                    }
                                 }
-                                polygon.holes = listOf(holeLatLngList)
+                                else {
+                                    val jsonObjectCoordinates = jsonRegex.replace(jsonObjectGeometry.getString("coordinates"),"")
+                                    jsonObjectCoordinatesList = jsonObjectCoordinates.split(",") as ArrayList<String>
+                                    val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
+                                    var index = 0
+                                    while(index < jsonObjectCoordinatesList.size) {
+                                        jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[index + 1].toDouble(),
+                                            jsonObjectCoordinatesList[index].toDouble()))
+                                        index += 2
+                                    }
+                                    val polygon = PolygonOverlay()
+                                    polygon.coords = jsonObjectLatLngList
+                                    multiPolygonArray.add(polygon)
+                                }
+                                break
                             }
-                            multiPolygonArray.add(polygon)
+                        }
+                        Toast.makeText(this, mapString, Toast.LENGTH_SHORT).show()
+                        for (i in multiPolygonArray) {
+                            i.color = Color.argb(80, 65, 105, 225)
+                            i.outlineColor = Color.rgb(65,105,225)
+                            i.outlineWidth = 10
+                            i.map = naverMap
                         }
                     }
-                    else {
-                        val jsonObjectCoordinates = jsonRegex.replace(jsonObjectGeometry.getString("coordinates"),"")
-                        jsonObjectCoordinatesList = jsonObjectCoordinates.split(",") as ArrayList<String>
-                        val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
-                        var index = 0
-                        while(index < jsonObjectCoordinatesList.size) {
-                            jsonObjectLatLngList.add(LatLng(jsonObjectCoordinatesList[index + 1].toDouble(),
-                                jsonObjectCoordinatesList[index].toDouble()))
-                            index += 2
-                        }
-                        val polygon = PolygonOverlay()
-                        polygon.coords = jsonObjectLatLngList
-                        multiPolygonArray.add(polygon)
-                    }
-                    break
                 }
-            }
-            Toast.makeText(this, mapString, Toast.LENGTH_SHORT).show()
-            for (i in multiPolygonArray) {
-                i.color = Color.argb(80, 65, 105, 225)
-                i.outlineColor = Color.rgb(65,105,225)
-                i.outlineWidth = 10
-                i.map = naverMap
-            }
+                }
+
+
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
     }
