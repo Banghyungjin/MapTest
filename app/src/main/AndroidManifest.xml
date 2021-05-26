@@ -24,6 +24,9 @@
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="0l2mcc3fx2" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".MainActivity">
             <intent-filter>

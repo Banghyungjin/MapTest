@@ -8,19 +8,20 @@
 
     <TextView
         android:id="@+id/App_Name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="338dp"
+        android:layout_height="108dp"
 
-        android:fontFamily="sans-serif-black"
+        android:fontFamily="@font/bree_serif"
+        android:gravity="center"
         android:text="Map Test"
         android:textColor="#2455E3"
         android:textSize="75sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.174" />
+        app:layout_constraintVertical_bias="0.178" />
 
     <Button
         android:id="@+id/mobileMap"
@@ -64,5 +65,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mobileMap"
         app:layout_constraintVertical_bias="0.262" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mady by HyungJin Bang"
+        app:layout_constraintBottom_toTopOf="@+id/mobileMap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/App_Name"
+        app:layout_constraintVertical_bias="0.268" />
 
 </android.support.constraint.ConstraintLayout>
