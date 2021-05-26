@@ -82,7 +82,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                 multiPolygonArray = arrayListOf<PolygonOverlay>()
             }
 //            val metersPerPixel = projection.metersPerPixel
-            if (geocoder.getFromLocation(coord.latitude, coord.longitude,1).size > 0) {
+            if (geocoder.getFromLocation(coord.latitude, coord.longitude,1).size > 0) { // 바다 같이 아무 것도 없는 부분을 클릭하는 경우 걸러냄
                 val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0]    // 좌표로 지역 명을 가져옴
                 val addressRegex = "[0-9-]".toRegex()   // 지역 명에서 숫자 삭제
                 val regexedAddress : String = addressRegex.replace(address.getAddressLine(0),"")
