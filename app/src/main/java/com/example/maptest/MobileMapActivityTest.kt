@@ -74,15 +74,6 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                 i.map = null
             }
             multiPolygonArray = arrayListOf<PolygonOverlay>()
-        }
-        naverMap.setOnMapClickListener { point, coord ->    // 맵을 짧게 클릭 시 실행되는 함수
-            if (multiPolygonArray.size != 0) {              // 시작전에 다른 폴리곤이 그려져 있으면 지움
-                for (i in multiPolygonArray) {
-                    i.map = null
-                }
-                multiPolygonArray = arrayListOf<PolygonOverlay>()
-            }
-//            val metersPerPixel = projection.metersPerPixel
             if (geocoder.getFromLocation(coord.latitude, coord.longitude,1).size > 0) { // 바다 같이 아무 것도 없는 부분을 클릭하는 경우 걸러냄
                 val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0]    // 좌표로 지역 명을 가져옴
                 val addressRegex = "[0-9-]".toRegex()   // 지역 명에서 숫자 삭제
@@ -171,6 +162,16 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                 }
 
             }
+        }
+        naverMap.setOnMapClickListener { point, coord ->    // 맵을 짧게 클릭 시 실행되는 함수
+            if (multiPolygonArray.size != 0) {              // 시작전에 다른 폴리곤이 그려져 있으면 지움
+                for (i in multiPolygonArray) {
+                    i.map = null
+                }
+                multiPolygonArray = arrayListOf<PolygonOverlay>()
+            }
+//            val metersPerPixel = projection.metersPerPixel
+
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
     }
