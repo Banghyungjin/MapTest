@@ -19,22 +19,20 @@ import kotlin.math.roundToInt
 
 class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var locationSource: FusedLocationSource    //주소 받아오는 거
-    private lateinit var naverMap: NaverMap                     //네이버 맵 객체
+    private lateinit var locationSource: FusedLocationSource    // 주소 받아오는 거
+    private lateinit var naverMap: NaverMap                     // 네이버 맵 객체
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {    // 액티비티 시작될 때 실행되는 함수
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mobile_map)
-
-        locationSource =
+        locationSource =    // 로케이션 소스 받아옴
             FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.map) as MapFragment?
             ?: MapFragment.newInstance().also {
                 fm.beginTransaction().add(R.id.map, it).commit()
             }
-        mapFragment.getMapAsync(this)
+        mapFragment.getMapAsync(this)   // 맵이 비동기로 작동되도록 해줌
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -51,18 +49,18 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
     }
     @UiThread
     override fun onMapReady(naverMap: NaverMap) {
-        this.naverMap = naverMap
-        val am = resources.assets
-        val geocoder = Geocoder(this)
-        val uiSettings = naverMap.uiSettings
+        this.naverMap = naverMap    // 네이버 맵 객체
+        val am = resources.assets   // 에셋 폴더를 사용가능하게 해줌
+        val geocoder = Geocoder(this)   // 좌표로 지역 이름을 찾게해주는 모듈
+        val uiSettings = naverMap.uiSettings    // 네이버 모바일맵 UI 사용
 //        val projection = naverMap.projection
-        var multiPolygonArray : ArrayList<PolygonOverlay> = arrayListOf<PolygonOverlay>()
+        var multiPolygonArray : ArrayList<PolygonOverlay> = arrayListOf<PolygonOverlay>()   // 지도에 표시할 폴리곤 (배열로 만들어 다수를 한꺼번에 표시)
 //        var counter = true
-        naverMap.locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
-        uiSettings.isLocationButtonEnabled = true
-        naverMap.isIndoorEnabled = true
-        naverMap.buildingHeight = 0.5f
-        naverMap.setOnSymbolClickListener { symbol ->
+        naverMap.locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)   // 로케이션 소스 받아옴
+        uiSettings.isLocationButtonEnabled = true   // 현재 위치 버튼 사용
+        naverMap.isIndoorEnabled = true             // 실내 지도 사용
+        naverMap.buildingHeight = 0.5f              // 지도 확대시 빌딩 3D로 보임, 50% 투명도
+        naverMap.setOnSymbolClickListener { symbol ->   // 심볼 마커 클릭 시 위, 경도와 이름 출력 함수
             Toast.makeText(this, symbol.caption + "\n위도 = " +
                     (symbol.position.latitude * 100).roundToInt() / 100f +
                     "\n경도 = " + (symbol.position.longitude * 100).roundToInt() / 100f,
@@ -70,49 +68,47 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             // 밑에서 true로 하면 이벤트 소비, OnMapClick 이벤트는 발생하지 않음
             false
         }
-        naverMap.setOnMapLongClickListener { point, coord ->
+        naverMap.setOnMapLongClickListener { point, coord ->    // 맵을 길게 클릭 시 현재 있는 폴리곤 전부 삭제
             for (i in multiPolygonArray) {
                 i.map = null
             }
             multiPolygonArray = arrayListOf<PolygonOverlay>()
         }
-        naverMap.setOnMapClickListener { point, coord ->
-            if (multiPolygonArray.size != 0) {
+        naverMap.setOnMapClickListener { point, coord ->    // 맵을 짧게 클릭 시 실행되는 함수
+            if (multiPolygonArray.size != 0) {              // 시작전에 다른 폴리곤이 그려져 있으면 지움
                 for (i in multiPolygonArray) {
                     i.map = null
                 }
                 multiPolygonArray = arrayListOf<PolygonOverlay>()
             }
-
 //            val metersPerPixel = projection.metersPerPixel
-            val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0]
-            val addressRegex = "[0-9-]".toRegex()
+            val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0]    // 좌표로 지역 명을 가져옴
+            val addressRegex = "[0-9-]".toRegex()   // 지역 명에서 숫자 삭제
             val regexedAddress : String = addressRegex.replace(address.getAddressLine(0),"")
             val regexedAddressList : ArrayList<String> = regexedAddress.split(" ") as ArrayList<String>
-            if (regexedAddressList.size > 1) {
-                val nationString : String = regexedAddressList[0]
-                if (nationString == "대한민국") {
-                    val mapString : String = regexedAddressList[1]
-                    val inputStream= am.open("${mapString}_변환.json")
-                    val findName = "CTP_KOR_NM"
-                    val jsonString = inputStream.bufferedReader().use { it.readText() }
-                    val jObject = JSONObject(jsonString)
-                    val jsonlist = jObject.getJSONArray("features")
-                    var jsonObjectCoordinatesList : ArrayList<String>
-                    regexedAddressList.removeAt(0)
-                    if (regexedAddressList[regexedAddressList.size - 1].isEmpty()) {
-                        regexedAddressList.removeAt(regexedAddressList.size - 1)
-                    }
-
-                    if (mapString.contains("[시도]".toRegex())) {
-                        for (i in 0 until jsonlist.length()) {
+            if (regexedAddressList.size > 1) {  // 광역시도 부분이 없는 경우 걸러냄
+                val nationString : String = regexedAddressList[0]   // 지역 국가명 가져옴
+                if (nationString == "대한민국") {   // 국외 지역 걸러냄
+                    val mapString : String = regexedAddressList[1]  // 지역 광역시도 부분 가져옴
+                    if (mapString.contains("[시도]".toRegex())) { // 광역시도가 아니면 걸러냄
+                        val inputStream= am.open("${mapString}_변환.json")    // 해당 광역시도의 geojson 파일 열기
+                        val findName = "CTP_KOR_NM"     // 광역시도 이름 변수 명
+                        val jsonString = inputStream.bufferedReader().use { it.readText() } // 해당 파일에서 이름이랑 주소 좌표 읽어옴
+                        val jObject = JSONObject(jsonString)
+                        val jsonlist = jObject.getJSONArray("features")
+                        var jsonObjectCoordinatesList : ArrayList<String>
+                        regexedAddressList.removeAt(0)
+                        if (regexedAddressList[regexedAddressList.size - 1].isEmpty()) {
+                            regexedAddressList.removeAt(regexedAddressList.size - 1)
+                        }
+                        for (i in 0 until jsonlist.length()) {  // geojson 파일에서 해당하는 좌표를 읽고 폴리곤을 만들어 폴리곤 리스트에 넣음
                             val jsonObject = jsonlist.getJSONObject(i)
                             val jsonObjectProperties = jsonObject.getJSONObject("properties")
                             val jsonObjectPropertiesNameKor = jsonObjectProperties.getString(findName)
                             val jsonObjectGeometry = jsonObject.getJSONObject("geometry")
                             val jsonRegex = "[\\[\\]]".toRegex()
                             if (mapString == jsonObjectPropertiesNameKor) {
-                                if (jsonObjectGeometry.getString("coordinates").contains("]]],")) {
+                                if (jsonObjectGeometry.getString("coordinates").contains("]]],")) { // 해당 지역이 다수의 폴리곤으로 이루어진 경우
                                     val multiPolyList: ArrayList<String> = jsonObjectGeometry.getString("coordinates").split("]]],") as ArrayList<String>
                                     for (j in multiPolyList) {
                                         val jsonObjectCoordinates = jsonRegex.replace(j,"")
@@ -126,7 +122,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                                         }
                                         val polygon = PolygonOverlay()
                                         polygon.coords = jsonObjectLatLngList
-                                        if (mapString == "전라남도" && jsonObjectLatLngList.size > 1000) {
+                                        if (mapString == "전라남도" && jsonObjectLatLngList.size > 1000) {  // 전남은 도 중 유일하게 광주로 인해 내부에 구멍이 있음
                                             val holeCoordinates = jsonRegex.replace(jsonObjectGeometry.getString("holes"),"")
                                             val holeCoordinatesList = holeCoordinates.split(",") as ArrayList<String>
                                             val holeLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
@@ -136,12 +132,12 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                                                     holeCoordinatesList[holeIndex].toDouble()))
                                                 holeIndex += 2
                                             }
-                                            polygon.holes = listOf(holeLatLngList)
+                                            polygon.holes = listOf(holeLatLngList) // 광주부분을 전남에서 빼줌
                                         }
                                         multiPolygonArray.add(polygon)
                                     }
                                 }
-                                else {
+                                else {  // 해당 지역이 폴리곤 1개로만 이루어진 경우
                                     val jsonObjectCoordinates = jsonRegex.replace(jsonObjectGeometry.getString("coordinates"),"")
                                     jsonObjectCoordinatesList = jsonObjectCoordinates.split(",") as ArrayList<String>
                                     val jsonObjectLatLngList: ArrayList<LatLng> = arrayListOf<LatLng>()
@@ -158,24 +154,24 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                                 break
                             }
                         }
-                        Toast.makeText(this, mapString, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, mapString, Toast.LENGTH_SHORT).show()  // 폴리곤 리스트에 있는 폴리곤 전부 표시
                         for (i in multiPolygonArray) {
-                            i.color = Color.argb(80, 65, 105, 225)
-                            i.outlineColor = Color.rgb(65,105,225)
-                            i.outlineWidth = 10
-                            i.map = naverMap
+                            i.color = Color.argb(80, 65, 105, 225)  // 폴리곤 내부 색깔 설정
+                            i.outlineColor = Color.rgb(65,105,225)  // 폴리곤 외곽선 색깔 설정
+                            i.outlineWidth = 10 // 폴리곤 외곽선 굵기 설정
+                            i.map = naverMap    // 폴리곤 표시
                         }
                     }
                 }
-                }
+            }
 
 
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
     }
 
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    companion object {  // 모름
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000   // 위치 요청 허가 값
     }
 
 }
