@@ -2,7 +2,6 @@ package com.example.maptest
 
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.*
@@ -20,9 +19,14 @@ class MainActivity : AppCompatActivity() {
         }
         val web : Button = findViewById(R.id.webMap)
         web.setOnClickListener {
-            val nextIntent2 = Intent(this, MobileMapActivity::class.java)
-            //val nextIntent2 = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://map?&appname=com.example.maptest"))
+            val nextIntent2 = Intent(this, WebMapActivity::class.java)
             startActivity(nextIntent2)
+        }
+
+        val test : Button = findViewById(R.id.testMap)
+        test.setOnClickListener {
+            val nextIntent3 = Intent(this, MobileMapActivity::class.java)
+            startActivity(nextIntent3)
         }
 
 
