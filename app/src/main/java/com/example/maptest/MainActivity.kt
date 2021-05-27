@@ -2,10 +2,21 @@ package com.example.maptest
 
 
 import android.content.Intent
+import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.*
 import android.widget.Button
+import android.widget.Toast
+import com.google.gson.Gson
+import java.io.BufferedInputStream
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         test.setOnClickListener {
             val nextIntent3 = Intent(this, MobileMapActivity::class.java)
             startActivity(nextIntent3)
+            //Toast.makeText(this, getNaverLocationSting(), Toast.LENGTH_SHORT).show()
         }
 
 
@@ -49,4 +61,29 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
+    private fun getNaverLocationSting (): String {
+
+        val clientID = "0l2mcc3fx2"
+        val clientSecret = "vRz8M0yRPc1QRNU1KGwcJIDXslLcOSjhmg0t9kfk"
+        val requestUrl = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode" +
+                "/v2/gc?request=coordsToaddr&coords=129.1133567,35.2982640" +
+                "&sourcecrs=epsg:4326&output=json&orders=legalcode,admcode"
+        val url = URL(requestUrl)
+        var conn : HttpURLConnection = url.openConnection() as HttpURLConnection
+        conn.requestMethod = "GET"
+        conn.setRequestProperty("X-NCP-APIGW-API-KEY-ID", clientID)
+        conn.setRequestProperty("X-NCP-APIGW-API-KEY", clientSecret)
+        conn.connect()
+
+        return conn.responseCode.toString()
+    }
+
+    fun readStream(inputStream: BufferedInputStream): String {
+        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+        val stringBuilder = StringBuilder()
+        bufferedReader.forEachLine { stringBuilder.append(it) }
+        return stringBuilder.toString()
+    }
+
 }

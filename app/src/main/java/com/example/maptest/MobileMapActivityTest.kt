@@ -14,9 +14,12 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.PolygonOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import org.json.JSONObject
+import java.io.BufferedInputStream
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 import kotlin.math.roundToInt
-import kotlin.reflect.typeOf
-
 
 class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
 
@@ -60,7 +63,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
         naverMap.locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)   // 로케이션 소스 받아옴
         uiSettings.isLocationButtonEnabled = true   // 현재 위치 버튼 사용
         naverMap.isIndoorEnabled = true             // 실내 지도 사용
-        naverMap.buildingHeight = 0.5f              // 지도 확대시 빌딩 3D로 보임, 50% 투명도
+        //naverMap.buildingHeight = 1f              // 지도 확대시 빌딩 3D로 보임, 50% 투명도 float값으로 빌딩 높이 조절가능
         naverMap.setOnSymbolClickListener { symbol ->   // 심볼 마커 클릭 시 위, 경도와 이름 출력 함수
             Toast.makeText(this, symbol.caption + "\n위도 = " +
                     (symbol.position.latitude * 100).roundToInt() / 100f +
@@ -76,6 +79,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             multiPolygonArray = arrayListOf<PolygonOverlay>()
             if (geocoder.getFromLocation(coord.latitude, coord.longitude,1).size > 0) { // 바다 같이 아무 것도 없는 부분을 클릭하는 경우 걸러냄
                 val address = geocoder.getFromLocation(coord.latitude, coord.longitude,1)[0]    // 좌표로 지역 명을 가져옴
+
                 val addressRegex = "[0-9-]".toRegex()   // 지역 명에서 숫자 삭제
                 val regexedAddress : String = addressRegex.replace(address.getAddressLine(0),"")
                 if (regexedAddress != "대한민국" && regexedAddress.contains("대한민국".toRegex())) { // 지역값이 충분하지 않은 것 걸러냄
@@ -160,9 +164,9 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         }
                     }
                 }
-
             }
         }
+
         naverMap.setOnMapClickListener { point, coord ->    // 맵을 짧게 클릭 시 실행되는 함수
             if (multiPolygonArray.size != 0) {              // 시작전에 다른 폴리곤이 그려져 있으면 지움
                 for (i in multiPolygonArray) {
@@ -172,6 +176,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             }
 //            val metersPerPixel = projection.metersPerPixel
 
+
+
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
     }
@@ -179,5 +185,6 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
     companion object {  // 모름
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000   // 위치 요청 허가 값
     }
+
 
 }
