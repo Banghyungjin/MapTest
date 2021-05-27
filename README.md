@@ -35,4 +35,4 @@
 4. 2번 사항에서 일부 연안 선택시 앱이 종료되는 부분 수정
 
 ## 앱 화면 
-![Screenshot_20210527-154249_MapTest](https://user-images.githubusercontent.com/37135305/119778952-1438b580-bf03-11eb-8483-2f586164a1ac.jpg){: width="100" height="100"}
+![Screenshot_20210527-154249_MapTest](https://user-images.githubusercontent.com/37135305/119778952-1438b580-bf03-11eb-8483-2f586164a1ac.jpg){: width="20" height="30"}
