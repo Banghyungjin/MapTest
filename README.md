@@ -35,10 +35,10 @@
 4. 2번 사항에서 일부 연안 선택시 앱이 종료되는 부분 수정
 
 ## 앱 화면 
-<img src="https://user-images.githubusercontent.com/37135305/119787195-ee63de80-bf0b-11eb-89ec-0f59f54b8ec2.jpg" width="30%">
+<p><img src="https://user-images.githubusercontent.com/37135305/119787195-ee63de80-bf0b-11eb-89ec-0f59f54b8ec2.jpg" width="30%">
 <img src="https://user-images.githubusercontent.com/37135305/119778952-1438b580-bf03-11eb-8483-2f586164a1ac.jpg" width="30%">
 <img src="https://user-images.githubusercontent.com/37135305/119778962-1733a600-bf03-11eb-87fd-4d7597e6e730.jpg" width="30%">
 <img src="https://user-images.githubusercontent.com/37135305/119778971-18fd6980-bf03-11eb-841b-2cc1ff2a62f7.jpg" width="30%">
 <img src="https://user-images.githubusercontent.com/37135305/119778977-1b5fc380-bf03-11eb-9e51-ece13e2b07a5.jpg" width="30%">
 <img src="https://user-images.githubusercontent.com/37135305/119778989-1d298700-bf03-11eb-86bc-07142924b8b0.jpg" width="30%">
-<img src="https://user-images.githubusercontent.com/37135305/119779001-20247780-bf03-11eb-9d2c-b48c121d3086.jpg" width="30%">
+<img src="https://user-images.githubusercontent.com/37135305/119779001-20247780-bf03-11eb-9d2c-b48c121d3086.jpg" width="30%"></p>
