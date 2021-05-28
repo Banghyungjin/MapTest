@@ -36,7 +36,7 @@
 
 ### <li> 2021-05-28
 1. 지역 선택시 해당되는 좌표의 지역이름을 가져오는 것을 google의 geocoding에서 네이버의 reverseGeocoding api를 사용하는 것으로 구현
-2. Retrofit을 사용해서 HTTP 통신으로 네이버 reverseGeocoding api 사용 기능 구현 (이제 세종특별자치시 제대로 인식)
+2. Retrofit을 사용해서 HTTP 통신으로 네이버 reverseGeocoding api 사용 기능 구현 (세종특별자치시 제대로 인식)
 
 ## 앱 화면 
 <p><img src="https://user-images.githubusercontent.com/37135305/119787195-ee63de80-bf0b-11eb-89ec-0f59f54b8ec2.jpg" width="15%">
