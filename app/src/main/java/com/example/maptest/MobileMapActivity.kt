@@ -97,7 +97,7 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     response: Response<ResultGetLocationJson>
                 ) {
                     response_string = response.body()
-                    if (response_string?.results?.get(0)?.region?.area1?.name != null) {
+                    if (response_string?.results?.size != 0 && response_string?.results?.get(0)?.region?.area1?.name != null) {
                         val mapString = response_string?.results?.get(0)?.region?.area1?.name
                         val am = resources.assets   // 에셋 폴더를 사용가능하게 해줌
                         val inputStream= am.open("${mapString}_변환.json")    // 해당 광역시도의 geojson 파일 열기
