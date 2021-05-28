@@ -10,6 +10,11 @@ import android.view.*
 import android.widget.Button
 import android.widget.Toast
 import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -19,13 +24,41 @@ import java.net.URLEncoder
 
 
 class MainActivity : AppCompatActivity() {
+    val CLIENT_ID = "0l2mcc3fx2"
+    val CLIENT_SECRET = "vRz8M0yRPc1QRNU1KGwcJIDXslLcOSjhmg0t9kfk"
+    val BASE_URL_NAVER_API = "https://naveropenapi.apigw.ntruss.com/"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        fun returnLocation(){
+            var response_string : ResultGetLocationJson? = null
+            val retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL_NAVER_API)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val api = retrofit.create(NaverReverseGeoAPI::class.java)
+            val callGetLocation = api.getLocation(CLIENT_ID, CLIENT_SECRET, "127.2654387,36.5008113")
+            callGetLocation.enqueue(object : Callback<ResultGetLocationJson> {
+                override fun onResponse(
+                    call: Call<ResultGetLocationJson>,
+                    response: Response<ResultGetLocationJson>
+                ) {
+                    response_string = response.body()
+                    Log.d("결과", "성공 : ${response_string?.results?.size}")
+                    Toast.makeText(this@MainActivity, "${response_string?.results?.get(0)?.region?.area1?.name}", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onFailure(call: Call<ResultGetLocationJson>, t: Throwable) {
+                    Log.d("결과:", "실패 : $t")
+                }
+            })
+        }
+
         val mobile : Button = findViewById(R.id.mobileMap)
         mobile.setOnClickListener {
-            val nextIntent = Intent(this, MobileMapActivityTest::class.java)
+            val nextIntent = Intent(this, MobileMapActivity::class.java)
             startActivity(nextIntent)
         }
         val web : Button = findViewById(R.id.webMap)
@@ -36,10 +69,14 @@ class MainActivity : AppCompatActivity() {
 
         val test : Button = findViewById(R.id.testMap)
         test.setOnClickListener {
-            val nextIntent3 = Intent(this, MobileMapActivity::class.java)
+            val nextIntent3 = Intent(this, MobileMapActivityTest::class.java)
             startActivity(nextIntent3)
-            //Toast.makeText(this, getNaverLocationSting(), Toast.LENGTH_SHORT).show()
+//            returnLocation()
+//            Toast.makeText(this, returnLocation().toString(), Toast.LENGTH_SHORT).show()
         }
+
+
+
 
 
     }
@@ -62,28 +99,8 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun getNaverLocationSting (): String {
 
-        val clientID = "0l2mcc3fx2"
-        val clientSecret = "vRz8M0yRPc1QRNU1KGwcJIDXslLcOSjhmg0t9kfk"
-        val requestUrl = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode" +
-                "/v2/gc?request=coordsToaddr&coords=129.1133567,35.2982640" +
-                "&sourcecrs=epsg:4326&output=json&orders=legalcode,admcode"
-        val url = URL(requestUrl)
-        var conn : HttpURLConnection = url.openConnection() as HttpURLConnection
-        conn.requestMethod = "GET"
-        conn.setRequestProperty("X-NCP-APIGW-API-KEY-ID", clientID)
-        conn.setRequestProperty("X-NCP-APIGW-API-KEY", clientSecret)
-        conn.connect()
 
-        return conn.responseCode.toString()
-    }
 
-    fun readStream(inputStream: BufferedInputStream): String {
-        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-        val stringBuilder = StringBuilder()
-        bufferedReader.forEachLine { stringBuilder.append(it) }
-        return stringBuilder.toString()
-    }
 
 }
