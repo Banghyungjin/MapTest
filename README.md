@@ -6,7 +6,7 @@
 
 ## 사용한 API
 
-### <li> 네이버 지도 API - Mobile Dynamic Map https://www.ncloud.com/product/applicationService/maps
+### <li> 네이버 지도 API - Mobile Dynamic Map,  https://www.ncloud.com/product/applicationService/maps
 
 ## 진행상황
 
