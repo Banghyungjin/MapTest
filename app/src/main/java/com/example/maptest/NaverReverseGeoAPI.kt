@@ -1,5 +1,6 @@
 package com.example.maptest
 
+import com.example.maptest.jsons.ResultGetLocationJson
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header

@@ -25,7 +25,14 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var locationSource: FusedLocationSource    // 주소 받아오는 거
     private lateinit var naverMap: NaverMap                     // 네이버 맵 객체
+    private val colorArray : ArrayList<Int> = arrayListOf(Color.rgb(244, 0, 0),
+        Color.rgb(247, 119, 0), Color.rgb(244, 226, 0), Color.rgb(0, 206, 37),
+        Color.rgb(65, 105, 225), Color.rgb(123, 0, 225))
+    private val lineColorArray : ArrayList<Int> = arrayListOf(Color.argb(80, 244, 0, 0),
+        Color.argb(80,247, 119, 0), Color.argb(80,244, 226, 0), Color.argb(80,0, 206, 37),
+        Color.argb(80,65, 105, 225), Color.argb(80,123, 0, 225))
 
+    private var counter = 0
     override fun onCreate(savedInstanceState: Bundle?) {    // 액티비티 시작될 때 실행되는 함수
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mobile_map)
@@ -90,7 +97,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         if (nationString == "대한민국") {   // 국외 지역 걸러냄
                             val mapString : String = regexedAddressList[1]  // 지역 광역시도 부분 가져옴
                             if (mapString.contains("[시도]".toRegex())) { // 광역시도가 아니면 걸러냄
-                                val inputStream= am.open("${mapString}_변환.json")    // 해당 광역시도의 geojson 파일 열기
+//                                val inputStream= am.open("${mapString}_변환.json")    // 해당 광역시도의 geojson 파일 열기
+                                val inputStream= am.open("광역시도_변환.json")    // 해당 광역시도의 geojson 파일 열기
                                 val findName = "CTP_KOR_NM"     // 광역시도 이름 변수 명
                                 val jsonString = inputStream.bufferedReader().use { it.readText() } // 해당 파일에서 이름이랑 주소 좌표 읽어옴
                                 val jObject = JSONObject(jsonString)
@@ -154,8 +162,11 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                                     }
                                 }
                                 Toast.makeText(this, mapString, Toast.LENGTH_SHORT).show()  // 폴리곤 리스트에 있는 폴리곤 전부 표시
+                                var colorString = colorArray[counter]
+                                counter ++
+
                                 for (i in multiPolygonArray) {
-                                    i.color = Color.argb(80, 65, 105, 225)  // 폴리곤 내부 색깔 설정
+                                    i.color = Color.argb(80,65,105,225)  // 폴리곤 내부 색깔 설정
                                     i.outlineColor = Color.rgb(65,105,225)  // 폴리곤 외곽선 색깔 설정
                                     i.outlineWidth = 10 // 폴리곤 외곽선 굵기 설정
                                     i.map = naverMap    // 폴리곤 표시

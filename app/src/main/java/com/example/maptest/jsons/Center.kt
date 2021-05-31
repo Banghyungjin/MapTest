@@ -1,6 +1,6 @@
-package com.example.maptest
+package com.example.maptest.jsons
 
-data class CenterXX(
+data class Center(
     val crs: String,
     val x: Double,
     val y: Double

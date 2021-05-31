@@ -1,4 +1,4 @@
-package com.example.maptest
+package com.example.maptest.jsons
 
 data class Area0(
     val coords: Coords,
