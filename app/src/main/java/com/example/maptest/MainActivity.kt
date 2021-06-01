@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onBackPressed() {
+    override fun onBackPressed() {  // 뒤로가기 시 alertdialog를 띄워 확실히 종료할 것인지 확인함
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("종료 확인").setMessage("정말 종료할거에요?")
         builder.setPositiveButton("그래", DialogInterface.OnClickListener{dialog, which ->
