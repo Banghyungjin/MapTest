@@ -3,6 +3,7 @@ package com.example.maptest
 import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.UiThread
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
@@ -232,7 +233,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
 //            counter = 0
         }
 
-        val showAll : Button = findViewById(R.id.showAllBtn)
+        val showAll : FloatingActionButton = findViewById(R.id.floatingActionButton)
         var showAllcounter = true
         showAll.setOnClickListener {
             if (showAllcounter) {

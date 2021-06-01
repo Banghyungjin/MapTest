@@ -43,16 +43,31 @@
             tools:layout_editor_absoluteX="16dp" />
     </android.support.v7.widget.Toolbar>
 
-    <Button
-        android:id="@+id/showAllBtn"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:background="#82B1FF"
-        android:hint="모든 행정구역의 경계를 표시합니다"
-        android:text="@string/show_all"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/showAllBtn"-->
+<!--        style="@style/Widget.AppCompat.Button.Colored"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:background="#82B1FF"-->
+<!--        android:hint="모든 행정구역의 경계를 표시합니다"-->
+<!--        android:text="@string/show_all"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/toolbar"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="#667DFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976"
+        app:srcCompat="@android:drawable/ic_menu_mapmode" />
 
 
 </android.support.constraint.ConstraintLayout>
