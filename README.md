@@ -38,6 +38,10 @@
 1. 지역 선택시 해당되는 좌표의 지역이름을 가져오는 것을 google의 geocoding에서 네이버의 reverseGeocoding api를 사용하는 것으로 구현
 2. Retrofit을 사용해서 HTTP 통신으로 네이버 reverseGeocoding api 사용 기능 구현 (세종특별자치시 제대로 인식)
 
+### <li> 2021-06-01
+1. 구역 경계 좌표 정보를 이전에 매번 새로 해당하는 구역의 json파일을 열고 가져오는 것에서 하나로 통합된 json 파일 하나에서 액티비티 시작 시 전부 가져와 배열로 저장 후 사용 
+2. showAll 버튼 추가 (버튼 클릭 시 모든 광역시도 구역을 한번에 보여줌)
+
 ## 앱 화면 
 <p><img src="https://user-images.githubusercontent.com/37135305/119787195-ee63de80-bf0b-11eb-89ec-0f59f54b8ec2.jpg" width="15%">
 <img src="https://user-images.githubusercontent.com/37135305/119778952-1438b580-bf03-11eb-8483-2f586164a1ac.jpg" width="15%">
