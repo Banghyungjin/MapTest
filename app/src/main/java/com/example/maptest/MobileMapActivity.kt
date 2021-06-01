@@ -12,6 +12,8 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Align
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PolygonOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import org.json.JSONObject
@@ -33,9 +35,11 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val lineColorArray : ArrayList<Int> = arrayListOf(Color.rgb(244, 0, 0),
         Color.rgb(247, 119, 0), Color.rgb(244, 226, 0), Color.rgb(0, 206, 37),
         Color.rgb(65, 105, 225), Color.rgb(123, 0, 225))
+
     private val colorArray : ArrayList<Int> = arrayListOf(Color.argb(80, 244, 0, 0),
         Color.argb(80,247, 119, 0), Color.argb(80,244, 226, 0), Color.argb(80,0, 206, 37),
         Color.argb(80,65, 105, 225), Color.argb(80,123, 0, 225))
+
     private var counter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {    // 액티비티 시작될 때 실행되는 함수
@@ -71,6 +75,7 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
 //        val projection = naverMap.projection
         var multiPolygonArray : ArrayList<PolygonOverlay> = arrayListOf<PolygonOverlay>()   // 지도에 표시할 폴리곤 (배열로 만들어 다수를 한꺼번에 표시)
 //        var counter = true
+        val marker = Marker()
         naverMap.locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)   // 로케이션 소스 받아옴
         uiSettings.isLocationButtonEnabled = true   // 현재 위치 버튼 사용
         naverMap.isIndoorEnabled = true             // 실내 지도 사용
@@ -99,7 +104,9 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 ) {
                     responseString = response.body()
                     if (responseString?.results?.size != 0 && responseString?.results?.get(0)?.region?.area1?.name != null) {
-                        val mapString = responseString?.results?.get(0)?.region?.area1?.name
+                        val mapString = responseString?.results?.get(0)?.region?.area1?.name    // 선택한 지역 광역시도 이름
+                        val mapCenterCoordLongi = responseString?.results?.get(0)?.region?.area1?.coords?.center?.x  // 선택한 지역 중심지 경도
+                        val mapCenterCoordLati = responseString?.results?.get(0)?.region?.area1?.coords?.center?.y  // 선택한 지역 중심지 위도
                         val am = resources.assets   // 에셋 폴더를 사용가능하게 해줌
                         val inputStream= am.open("광역시도_변환.json")    // 해당 광역시도의 geojson 파일 열기
                         val findName = "CTP_KOR_NM"     // 광역시도 이름 변수 명
@@ -160,7 +167,17 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                                 break
                             }
                         }
-                        Toast.makeText(this@MobileMapActivity, mapString, Toast.LENGTH_SHORT).show()  // 폴리곤 리스트에 있는 폴리곤 전부 표시
+//                        Toast.makeText(this@MobileMapActivity, "$mapString\n$mapCenterCoordLati\n$mapCenterCoordLongi", Toast.LENGTH_SHORT).show()  // 폴리곤 리스트에 있는 폴리곤 전부 표시
+                        if (mapCenterCoordLati != null && mapCenterCoordLongi != null) {    // 선택한 지역의 중심 좌표에 마커를 생성
+                            marker.position = LatLng(mapCenterCoordLati.toDouble(),mapCenterCoordLongi.toDouble())  // 마커 위경도 설정
+                            marker.captionText = "$mapString"   // 마커 텍스트 설정
+                            marker.setCaptionAligns(Align.Top)  // 마커 텍스트 위치
+                            marker.captionTextSize = 20f        // 마커 텍스트 크기
+                            marker.subCaptionText = "북위 : $mapCenterCoordLati\n동경 : $mapCenterCoordLongi"
+                            marker.subCaptionColor = Color.DKGRAY
+                            marker.subCaptionTextSize = 15f
+                            marker.map = naverMap               // 마커 표시
+                        }
                         for (i in multiPolygonArray) {
                             i.color = Color.argb(80,65,105,225)  // 폴리곤 내부 색깔 설정
                             i.outlineColor = Color.rgb(65,105,225)  // 폴리곤 외곽선 색깔 설정
@@ -185,7 +202,7 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             multiPolygonArray = arrayListOf<PolygonOverlay>()
 
-            returnLocation(coord)
+            returnLocation(coord)   // 이걸로 위에 긴 거 실행
         }
 
         naverMap.setOnMapClickListener { point, coord ->    // 맵을 짧게 클릭 시 실행되는 함수
@@ -195,10 +212,8 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 multiPolygonArray = arrayListOf<PolygonOverlay>()
             }
+            marker.map = null
 //            val metersPerPixel = projection.metersPerPixel
-
-
-
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
     }
