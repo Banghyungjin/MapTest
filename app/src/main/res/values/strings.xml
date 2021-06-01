@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MapTest</string>
+    <string name="show_all">Show All</string>
+    <string name="mobile_map">Mobile Map</string>
 </resources>

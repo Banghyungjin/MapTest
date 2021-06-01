@@ -1,19 +1,14 @@
 package com.example.maptest
 
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.*
 import android.widget.Button
-import android.widget.Toast
-import com.example.maptest.jsons.ResultGetLocationJson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         val mobile : Button = findViewById(R.id.mobileMap)
         mobile.setOnClickListener {
-            val nextIntent = Intent(this, MobileMapActivity::class.java)
+            val nextIntent = Intent(this, MobileMapActivityTest::class.java)
             startActivity(nextIntent)
         }
         val web : Button = findViewById(R.id.webMap)
@@ -67,7 +62,15 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
+    override fun onBackPressed() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("종료 확인").setMessage("정말 종료할거에요?")
+        builder.setPositiveButton("그래", DialogInterface.OnClickListener{dialog, which ->
+            finish()
+        })
+        builder.setNegativeButton("아니", DialogInterface.OnClickListener{dialog, which -> })
+        builder.show()
+    }
 
 
 }
