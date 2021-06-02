@@ -26,19 +26,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val mobile : Button = findViewById(R.id.mobileMap)
         mobile.setOnClickListener {
-            val nextIntent = Intent(this, MobileMapActivityTest::class.java)
+            val nextIntent = Intent(this, MobileMapActivity::class.java)
             startActivity(nextIntent)
         }
         val web : Button = findViewById(R.id.webMap)
         web.setOnClickListener {
-//            val nextIntent2 = Intent(this, WebMapActivity::class.java)
-//            startActivity(nextIntent2)
-            web.setOnClickListener {
-                var thread = NetworkThread()
-                thread.start()
-            }
-
-
+            val nextIntent2 = Intent(this, WebMapActivity::class.java)
+            startActivity(nextIntent2)
         }
 
         val test : Button = findViewById(R.id.testMap)

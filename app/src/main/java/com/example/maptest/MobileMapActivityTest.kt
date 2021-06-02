@@ -18,6 +18,7 @@ import com.naver.maps.map.overlay.Align
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PolygonOverlay
 import com.naver.maps.map.util.FusedLocationSource
+import com.naver.maps.map.util.MarkerIcons
 import org.json.JSONObject
 import org.w3c.dom.Element
 import retrofit2.Call
@@ -38,13 +39,12 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
     private val BASE_URL_NAVER_API = "https://naveropenapi.apigw.ntruss.com/"
 
     // 지도에 그릴 폴리곤 윤곽선 색깔들
-    private val lineColorArray : ArrayList<Int> = arrayListOf(Color.rgb(244, 0, 0),
-        Color.rgb(247, 119, 0), Color.rgb(244, 226, 0), Color.rgb(0, 206, 37),
-        Color.rgb(65, 105, 225), Color.rgb(123, 0, 225))
+    private val lineColorArray : ArrayList<Int> = arrayListOf(Color.rgb(10,180,10),
+        Color.rgb(250,200,0), Color.rgb(255,102,0), Color.rgb(255,0,0))
     // 지도에 그릴 폴리곤 내부 색깔들
-    private val colorArray : ArrayList<Int> = arrayListOf(Color.argb(80, 244, 0, 0),
-        Color.argb(80,247, 119, 0), Color.argb(80,244, 226, 0), Color.argb(80,0, 206, 37),
-        Color.argb(80,65, 105, 225), Color.argb(80,123, 0, 225))
+    private val colorArray : ArrayList<Int> = arrayListOf(Color.argb(80, 10,180,10),
+        Color.argb(80,200,250,0), Color.argb(80,255,102,0),
+        Color.argb(80,255,0,0))
 
     private var counter = 0
 
@@ -135,6 +135,15 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         val mapCenterCoordLongi = responseString?.results?.get(0)?.region?.area1?.coords?.center?.x  // 선택한 지역 중심지 경도
                         val mapCenterCoordLati = responseString?.results?.get(0)?.region?.area1?.coords?.center?.y  // 선택한 지역 중심지 위도
                         indexOfLocationArray = locationArray.indexOf(mapString)
+                        counter = if (covidInfo[0].toInt() > 10000) {
+                            3
+                        } else if (covidInfo[0].toInt() > 5000) {
+                            2
+                        } else if (covidInfo[0].toInt() > 1000) {
+                            1
+                        } else {
+                            0;
+                        }
                         if (mapCenterCoordLati != null && mapCenterCoordLongi != null) {    // 선택한 지역의 중심 좌표에 마커를 생성
                             marker.position = LatLng(mapCenterCoordLati.toDouble(),mapCenterCoordLongi.toDouble())  // 마커 위경도 설정
                             marker.captionText = "$mapString"   // 마커 텍스트 설정
@@ -146,20 +155,22 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                                     "총 ${covidInfo[3]}명" +
                                     "\n금일 격리자 : ${covidInfo[4]}명" +
                                     "\n금일 사망자  : ${covidInfo[5]}명"
-                            marker.subCaptionColor = Color.rgb(247, 119, 0)
+                            marker.subCaptionColor = Color.DKGRAY
                             marker.subCaptionTextSize = 17f
                             marker.isHideCollidedSymbols = true
+                            marker.icon = MarkerIcons.BLACK
+                            marker.iconTintColor = lineColorArray[counter]
                             marker.map = naverMap               // 마커 표시
                         }
+
                         //Log.d("결과", "인덱스 : $indexOfLocationArray")
                         for (i in multiPolygonArray[indexOfLocationArray]) {
-                            i.color = Color.argb(80,65,105,225)  // 폴리곤 내부 색깔 설정
-                            i.outlineColor = Color.rgb(65,105,225)  // 폴리곤 외곽선 색깔 설정
+                            i.color = colorArray[counter]  // 폴리곤 내부 색깔 설정
+                            i.outlineColor = lineColorArray[counter]  // 폴리곤 외곽선 색깔 설정
                             i.outlineWidth = 10 // 폴리곤 외곽선 굵기 설정
                             i.map = naverMap    // 폴리곤 표시
                         }
-                        counter ++
-                        counter %= colorArray.size
+
                     }
 //                    Log.d("결과", "성공 : ${responseString?.results?.size} $requestCoord")
                 }
@@ -199,18 +210,41 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
         showAll.setOnClickListener {
             marker.map = null
             if (showAllcounter) {
-                for (m in multiPolygonArray) {
-                    for (i in m) {
-                        i.color = Color.argb(80,65,105,225)  // 폴리곤 내부 색깔 설정
-                        i.outlineColor = Color.rgb(65,105,225)  // 폴리곤 외곽선 색깔 설정  // 폴리곤 외곽선 색깔 설정
-                        i.outlineWidth = 10 // 폴리곤 외곽선 굵기 설정
+                for (m in 0 until multiPolygonArray.size) {
+                    counter = if (covidNumberArray[m][0].toInt() > 10000) {
+                        3
+                    } else if (covidNumberArray[m][0].toInt() > 5000) {
+                        2
+                    } else if (covidNumberArray[m][0].toInt() > 1000) {
+                        1
+                    } else {
+                        0;
+                    }
+                    for (i in multiPolygonArray[m]) {
+                        i.color = colorArray[counter]  // 폴리곤 내부 색깔 설정
+                        i.outlineColor = lineColorArray[counter]  // 폴리곤 외곽선 색깔 설정
+                        i.outlineWidth = 5 // 폴리곤 외곽선 굵기 설정
                         i.map = naverMap    // 폴리곤 표시
                     }
-//                    counter ++
-//                    counter %= colorArray.size
                 }
+                marker.position = LatLng(37.0,127.8)  // 마커 위경도 설정
+                marker.captionText = "전국"   // 마커 텍스트 설정
+                marker.setCaptionAligns(Align.Top)  // 마커 텍스트 위치
+                marker.captionTextSize = 25f        // 마커 텍스트 크기
+                marker.subCaptionText = "현재 확진자 : ${covidNumberArray[covidNumberArray.size - 1][0]}명" +
+                        "\n금일 확진자 증가량 : \n내부발병 ${covidNumberArray[covidNumberArray.size - 1][1]}명" +
+                        " + 외부유입 ${covidNumberArray[covidNumberArray.size - 1][2]}명 = " +
+                        "총 ${covidNumberArray[covidNumberArray.size - 1][3]}명" +
+                        "\n금일 격리자 : ${covidNumberArray[covidNumberArray.size - 1][4]}명" +
+                        "\n금일 사망자  : ${covidNumberArray[covidNumberArray.size - 1][5]}명"
+                marker.subCaptionColor = Color.DKGRAY
+                marker.subCaptionTextSize = 17f
+                marker.isHideCollidedSymbols = true
+                marker.icon = MarkerIcons.BLACK
+                marker.iconTintColor = lineColorArray[3]
+                marker.map = naverMap
                 showAllcounter = false
-//                counter = 0
+
             }
             else {
                 for (m in multiPolygonArray) {
@@ -218,9 +252,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         i.map = null    // 폴리곤 표시
                     }
                 }
-//                marker.map = null
                 showAllcounter = true
-//                counter = 0
+                marker.map = null
             }
         }
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //시작할 때 추적모드를 켜서 자동으로 현재 위치로 오게 함
