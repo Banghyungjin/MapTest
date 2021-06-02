@@ -7,7 +7,6 @@ import android.support.annotation.RequiresApi
 import android.support.annotation.UiThread
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.Toast
 import com.example.maptest.jsons.ResultGetLocationJson
 import com.naver.maps.geometry.LatLng
@@ -27,7 +26,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URL
-import java.time.LocalDate
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.math.roundToInt
 
@@ -253,44 +251,44 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                 val root = doc.documentElement
 
                 // xml 문서에서 태그 이름이 item인 태그들이 item_node_list에 리스트로 담김
-                val item_node_list = root.getElementsByTagName("item")
+                val itemNodeList = root.getElementsByTagName("item")
 
                 // item_node_list에 들어있는 태그 객체 수만큼 반복함
                 for (name in covidLocationArray) {
-                    for(i in 0 until item_node_list.length){
+                    for(i in 0 until itemNodeList.length){
                         // i번째 태그 객체를 item_element에 넣음
-                        val item_element = item_node_list.item(i) as Element
+                        val itemElement = itemNodeList.item(i) as Element
 
                         // item태그 객체에서 원하는 데이터를 태그이름을 이용해서 데이터를 가져옴
                         // xml 문서는 태그 이름으로 데이터를 가져오면 무조건 리스트로 나옴
-                        val gubun_list = item_element.getElementsByTagName("gubun")
-                        val gubun_node = gubun_list.item(0) as Element
-                        val gubun = gubun_node.textContent
+                        val gubunList = itemElement.getElementsByTagName("gubun")
+                        val gubunNode = gubunList.item(0) as Element
+                        val gubun = gubunNode.textContent
 
                         if (gubun == name) {
-                            val defCnt_list = item_element.getElementsByTagName("defCnt")
-                            val defCnt_node = defCnt_list.item(0) as Element
-                            val defCnt = defCnt_node.textContent
+                            val defcntList = itemElement.getElementsByTagName("defCnt")
+                            val defcntNode = defcntList.item(0) as Element
+                            val defCnt = defcntNode.textContent
 
-                            val deathCnt_list = item_element.getElementsByTagName("deathCnt")
-                            val deathCnt_node = deathCnt_list.item(0) as Element
-                            val deathCnt = deathCnt_node.textContent
+                            val deathcntList = itemElement.getElementsByTagName("deathCnt")
+                            val deathcntNode = deathcntList.item(0) as Element
+                            val deathCnt = deathcntNode.textContent
 
-                            val incDec_list = item_element.getElementsByTagName("incDec")
-                            val incDec_node = incDec_list.item(0) as Element
-                            val incDec = incDec_node.textContent
+                            val incdecList = itemElement.getElementsByTagName("incDec")
+                            val incdecNode = incdecList.item(0) as Element
+                            val incDec = incdecNode.textContent
 
-                            val isolIngCnt_list = item_element.getElementsByTagName("isolIngCnt")
-                            val isolIngCnt_node = isolIngCnt_list.item(0) as Element
-                            val isolIngCnt = isolIngCnt_node.textContent
+                            val isolingcntList = itemElement.getElementsByTagName("isolIngCnt")
+                            val isolingcntNode = isolingcntList.item(0) as Element
+                            val isolIngCnt = isolingcntNode.textContent
 
-                            val outside_list = item_element.getElementsByTagName("overFlowCnt")
-                            val outside_node = outside_list.item(0) as Element
-                            val outside = outside_node.textContent
+                            val outsideList = itemElement.getElementsByTagName("overFlowCnt")
+                            val outsideNode = outsideList.item(0) as Element
+                            val outside = outsideNode.textContent
 
-                            val inside_list = item_element.getElementsByTagName("localOccCnt")
-                            val inside_node = inside_list.item(0) as Element
-                            val inside = inside_node.textContent
+                            val insideList = itemElement.getElementsByTagName("localOccCnt")
+                            val insideNode = insideList.item(0) as Element
+                            val inside = insideNode.textContent
 
                             runOnUiThread {
                                 val inputCovidArray : ArrayList<String> = arrayListOf()
