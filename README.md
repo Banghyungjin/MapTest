@@ -44,6 +44,11 @@
 3. 처음 화면에서 뒤로가기 클릭 시 앱이 바로 종료되지 않고 alertdialog를 띄워 종료를 재확인하도록 수정
 4. 모바일 웹화면 레이아웃 수정
 
+### <li> 2021-06-02
+1. 공공데이터 API 코로나 관련 데이터 활용
+2. 코로나 관련 데이터를 각 광역시도에 맞게 맵에 올리는 기능 추가
+3. 맵 프래그먼트와 툴바가 서로 겹치는 현상 수정 (리니어 레이아웃 사용)
+
 ## 앱 화면 
 <p><img src="https://user-images.githubusercontent.com/37135305/119787195-ee63de80-bf0b-11eb-89ec-0f59f54b8ec2.jpg" width="15%">
 <img src="https://user-images.githubusercontent.com/37135305/119778952-1438b580-bf03-11eb-8483-2f586164a1ac.jpg" width="15%">
