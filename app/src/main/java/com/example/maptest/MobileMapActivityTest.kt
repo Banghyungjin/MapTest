@@ -141,7 +141,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                             marker.position = LatLng(mapCenterCoordLati.toDouble(),mapCenterCoordLongi.toDouble())  // 마커 위경도 설정
                             marker.captionText = "$mapString"   // 마커 텍스트 설정
                             marker.setCaptionAligns(Align.Top)  // 마커 텍스트 위치
-                            marker.captionTextSize = 30f        // 마커 텍스트 크기
+                            marker.captionTextSize = 25f        // 마커 텍스트 크기
                             marker.subCaptionText = "현재 확진자 : ${covidInfo[0]}명" +
                                     "\n금일 확진자 증가량 : \n내부발병 ${covidInfo[1]}명" +
                                     " + 외부유입 ${covidInfo[2]}명 = " +
@@ -149,7 +149,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                                     "\n금일 격리자 : ${covidInfo[4]}명" +
                                     "\n금일 사망자  : ${covidInfo[5]}명"
                             marker.subCaptionColor = Color.rgb(247, 119, 0)
-                            marker.subCaptionTextSize = 20f
+                            marker.subCaptionTextSize = 17f
+                            marker.isHideCollidedSymbols = true
                             marker.map = naverMap               // 마커 표시
                         }
                         //Log.d("결과", "인덱스 : $indexOfLocationArray")
@@ -177,7 +178,12 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             }
             marker.map = null
 //            counter = 0
-            returnLocation(coord)   // 이걸로 위에 긴 거 실행
+            try {
+                returnLocation(coord)   // 이걸로 위에 긴 거 실행
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+
         }
 
         naverMap.setOnMapClickListener { point, coord ->    // 맵을 짧게 클릭 시 실행되는 함수
@@ -193,6 +199,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
         val showAll : FloatingActionButton = findViewById(R.id.floatingActionButton)
         var showAllcounter = true
         showAll.setOnClickListener {
+            marker.map = null
             if (showAllcounter) {
                 for (m in multiPolygonArray) {
                     for (i in m) {
@@ -213,7 +220,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         i.map = null    // 폴리곤 표시
                     }
                 }
-                marker.map = null
+//                marker.map = null
                 showAllcounter = true
 //                counter = 0
             }
