@@ -57,12 +57,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
         "광주","대구","대전","부산","서울","세종","울산","인천","전남","전북","제주","충남","충북","합계")
 
     private val covidNumberArray : ArrayList<ArrayList<String>> = arrayListOf()
-
-
-
     private var multiPolygonArray : ArrayList<ArrayList<PolygonOverlay>> = arrayListOf()   // 지도에 표시할 폴리곤 (배열로 만들어 다수를 한꺼번에 표시)
     private var polygonArray : ArrayList<PolygonOverlay> = arrayListOf()   // 지도에 표시할 폴리곤 (배열로 만들어 다수를 한꺼번에 표시)
-
     private var indexOfLocationArray = locationArray.size
 
     override fun onCreate(savedInstanceState: Bundle?) {    // 액티비티 시작될 때 실행되는 함수
