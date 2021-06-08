@@ -3,6 +3,7 @@
 ## 설명
 
 ### <li> 안드로이드 스튜디오를 사용하여 지도 어플 만들기
+### <li> 실행은 repository root directory의 MapTest.apk 파일을 다운받아서 설치 후 사용
 
 ## 사용한 API
 
