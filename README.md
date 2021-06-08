@@ -50,6 +50,10 @@
 3. 맵 프래그먼트와 툴바가 서로 겹치는 현상 수정 (리니어 레이아웃 사용)
 4. 전국 코로나 데이터 표시 기능 추가
 
+### <li> 2021-06-08
+1. 공공데이터 API 연결 오류 수정 (인증키 관련)
+2. APK 파일 제작
+
 ## 앱 화면 
 <p><img src="https://user-images.githubusercontent.com/37135305/119787195-ee63de80-bf0b-11eb-89ec-0f59f54b8ec2.jpg" width="15%">
 <img src="https://user-images.githubusercontent.com/37135305/119778952-1438b580-bf03-11eb-8483-2f586164a1ac.jpg" width="15%">
