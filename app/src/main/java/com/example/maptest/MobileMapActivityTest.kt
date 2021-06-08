@@ -265,10 +265,10 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             try {
 
                 // 접속할 페이지의 주소
-                val site = "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?" +
-                        "serviceKey=C%2F53dRPVlGwdFgAwBz0uNqX%2FB5COnUkL9cRSvJ01NqdIejOQZaHm%2FCh30E5AnXC3DnhSI17%2B64HJa57wiJNvKg%3D%3D"
+                val site = "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"
                 val url = URL(site)
                 val conn = url.openConnection()
+                conn.setRequestProperty("serviceKey", "C/53dRPVlGwdFgAwBz0uNqX/B5COnUkL9cRSvJ01NqdIejOQZaHm/Ch30E5AnXC3DnhSI17+64HJa57wiJNvKg==")
                 val input = conn.getInputStream()
 
                 val factory = DocumentBuilderFactory.newInstance()
@@ -337,6 +337,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             }catch (e: Exception){
                 e.printStackTrace()
             }
+//            Toast.makeText(this@MobileMapActivityTest,covidNumberArray.size ,
+//                Toast.LENGTH_SHORT).show()
         }
     }
 

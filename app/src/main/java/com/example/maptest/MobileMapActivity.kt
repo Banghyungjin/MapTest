@@ -18,6 +18,7 @@ import com.naver.maps.map.overlay.Align
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PolygonOverlay
 import com.naver.maps.map.util.FusedLocationSource
+import com.naver.maps.map.util.MarkerIcons
 import org.json.JSONObject
 import org.w3c.dom.Element
 import retrofit2.Call
@@ -141,6 +142,13 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                             i.outlineWidth = 10 // 폴리곤 외곽선 굵기 설정
                             i.map = naverMap    // 폴리곤 표시
                         }
+                        if (mapCenterCoordLati != null && mapCenterCoordLongi != null) {    // 선택한 지역의 중심 좌표에 마커를 생성
+                            marker.position = LatLng(mapCenterCoordLati.toDouble(),mapCenterCoordLongi.toDouble())  // 마커 위경도 설정
+                            marker.captionText = "$mapString"   // 마커 텍스트 설정
+                            marker.captionTextSize = 20f
+                            marker.setCaptionAligns(Align.Top)  // 마커 텍스트 위치
+                            marker.map = naverMap               // 마커 표시
+                        }
 
                     }
 //                    Log.d("결과", "성공 : ${responseString?.results?.size} $requestCoord")
@@ -218,10 +226,10 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             try {
 
                 // 접속할 페이지의 주소
-                val site = "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?" +
-                        "serviceKey=C%2F53dRPVlGwdFgAwBz0uNqX%2FB5COnUkL9cRSvJ01NqdIejOQZaHm%2FCh30E5AnXC3DnhSI17%2B64HJa57wiJNvKg%3D%3D"
+                val site = "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"
                 val url = URL(site)
                 val conn = url.openConnection()
+                conn.setRequestProperty("serviceKey", "C/53dRPVlGwdFgAwBz0uNqX/B5COnUkL9cRSvJ01NqdIejOQZaHm/Ch30E5AnXC3DnhSI17+64HJa57wiJNvKg==")
                 val input = conn.getInputStream()
 
                 val factory = DocumentBuilderFactory.newInstance()
