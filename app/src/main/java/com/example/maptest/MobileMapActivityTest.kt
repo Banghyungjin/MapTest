@@ -1,5 +1,6 @@
 package com.example.maptest
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -27,7 +28,10 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
@@ -90,6 +94,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("SimpleDateFormat")
     @UiThread
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap    // 네이버 맵 객체
@@ -140,17 +146,19 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         } else {
                             0;
                         }
+
+
                         if (mapCenterCoordLati != null && mapCenterCoordLongi != null) {    // 선택한 지역의 중심 좌표에 마커를 생성
                             marker.position = LatLng(mapCenterCoordLati.toDouble(),mapCenterCoordLongi.toDouble())  // 마커 위경도 설정
                             marker.captionText = "$mapString"   // 마커 텍스트 설정
                             marker.setCaptionAligns(Align.Top)  // 마커 텍스트 위치
                             marker.captionTextSize = 25f        // 마커 텍스트 크기
-                            marker.subCaptionText = "현재 확진자 : ${covidInfo[0]}명" +
-                                    "\n금일 확진자 증가량 : \n내부발병 ${covidInfo[1]}명" +
+                            marker.subCaptionText = "${returnDateString()} 확진자 : ${covidInfo[0]}명" +
+                                    "\n${returnDateString()} 확진자 증가량 : \n내부발병 ${covidInfo[1]}명" +
                                     " + 외부유입 ${covidInfo[2]}명 = " +
                                     "총 ${covidInfo[3]}명" +
-                                    "\n금일 격리자 : ${covidInfo[4]}명" +
-                                    "\n금일 사망자  : ${covidInfo[5]}명"
+                                    "\n${returnDateString()} 격리자 : ${covidInfo[4]}명" +
+                                    "\n${returnDateString()} 사망자  : ${covidInfo[5]}명"
                             marker.subCaptionColor = Color.DKGRAY
                             marker.subCaptionTextSize = 17f
                             marker.isHideCollidedSymbols = true
@@ -227,12 +235,12 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                 marker.captionText = "전국"   // 마커 텍스트 설정
                 marker.setCaptionAligns(Align.Top)  // 마커 텍스트 위치
                 marker.captionTextSize = 25f        // 마커 텍스트 크기
-                marker.subCaptionText = "현재 확진자 : ${covidNumberArray[covidNumberArray.size - 1][0]}명" +
-                        "\n금일 확진자 증가량 : \n내부발병 ${covidNumberArray[covidNumberArray.size - 1][1]}명" +
+                marker.subCaptionText = "${returnDateString()} 확진자 : ${covidNumberArray[covidNumberArray.size - 1][0]}명" +
+                        "\n${returnDateString()} 확진자 증가량 : \n내부발병 ${covidNumberArray[covidNumberArray.size - 1][1]}명" +
                         " + 외부유입 ${covidNumberArray[covidNumberArray.size - 1][2]}명 = " +
                         "총 ${covidNumberArray[covidNumberArray.size - 1][3]}명" +
-                        "\n금일 격리자 : ${covidNumberArray[covidNumberArray.size - 1][4]}명" +
-                        "\n금일 사망자  : ${covidNumberArray[covidNumberArray.size - 1][5]}명"
+                        "\n${returnDateString()} 격리자 : ${covidNumberArray[covidNumberArray.size - 1][4]}명" +
+                        "\n${returnDateString()} 사망자  : ${covidNumberArray[covidNumberArray.size - 1][5]}명"
                 marker.subCaptionColor = Color.DKGRAY
                 marker.subCaptionTextSize = 17f
                 marker.isHideCollidedSymbols = true
@@ -260,12 +268,23 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
     }
 
     inner class NetworkThread: Thread(){    // 스레드에서 코로나19 데이터를 공공데이터 api를 사용해서 읽어옴
+        @SuppressLint("SimpleDateFormat")
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, -1) //변경하고 싶은 원하는 날짜 수를 넣어 준다.
+            val TimeToDate = calendar.time
+            val formatter = SimpleDateFormat("yyyyMMdd") //날짜의 모양을 원하는 대로 변경 해 준다.
+            val ampmformatter = SimpleDateFormat("aa")
+            formatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+            val finalResultDate = formatter.format(TimeToDate)
+            val ampm = ampmformatter.format(TimeToDate).toString()
             try {
-
                 // 접속할 페이지의 주소
-                val site = "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"
+                var site = "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"
+                if (ampm == "오전") {
+                    site += "startCreateDt=${finalResultDate}&endCreateDt=${finalResultDate}"
+                }
                 val url = URL(site)
                 val conn = url.openConnection()
                 conn.setRequestProperty("serviceKey", "C/53dRPVlGwdFgAwBz0uNqX/B5COnUkL9cRSvJ01NqdIejOQZaHm/Ch30E5AnXC3DnhSI17+64HJa57wiJNvKg==")
@@ -411,6 +430,20 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             }catch (e: Exception){
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun returnDateString() : String {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, 0) //변경하고 싶은 원하는 날짜 수를 넣어 준다.
+        val timeToString = calendar.time
+        val formatter = SimpleDateFormat("aa")
+        formatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+        val ampm = formatter.format(timeToString)
+        return if (ampm == "오전") {
+            "어제"
+        } else {
+            "오늘"
         }
     }
 }
