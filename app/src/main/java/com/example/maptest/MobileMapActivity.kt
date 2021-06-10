@@ -53,13 +53,6 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
         "광주광역시","대구광역시","대전광역시","부산광역시","서울특별시","세종특별자치시","울산광역시",
         "인천광역시","전라남도","전라북도","제주특별자치도","충청남도","충청북도")
 
-    private val covidLocationArray : ArrayList<String> = arrayListOf("강원","경기","경남","경북",
-        "광주","대구","대전","부산","서울","세종","울산","인천","전남","전북","제주","충남","충북","합계")
-
-    private val covidNumberArray : ArrayList<ArrayList<String>> = arrayListOf()
-
-
-
     private var multiPolygonArray : ArrayList<ArrayList<PolygonOverlay>> = arrayListOf()   // 지도에 표시할 폴리곤 (배열로 만들어 다수를 한꺼번에 표시)
     private var polygonArray : ArrayList<PolygonOverlay> = arrayListOf()   // 지도에 표시할 폴리곤 (배열로 만들어 다수를 한꺼번에 표시)
 
@@ -76,8 +69,6 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 fm.beginTransaction().add(R.id.map, it).commit()
             }
         mapFragment.getMapAsync(this)   // 맵이 비동기로 작동되도록 해줌
-        val covidThread = NetworkThread()
-        covidThread.start()
         val locationThread = MakeLocationArrayThread()
         locationThread.start()
     }
@@ -131,7 +122,6 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (responseString?.results?.size != 0 && responseString?.results?.get(0)?.region?.area1?.name != null) {
                         val mapString = responseString?.results?.get(0)?.region?.area1?.name    // 선택한 지역 광역시도 이름
                         val mapStringIndex = locationArray.indexOf(mapString)
-                        val covidInfo = covidNumberArray[mapStringIndex]
                         val mapCenterCoordLongi = responseString?.results?.get(0)?.region?.area1?.coords?.center?.x  // 선택한 지역 중심지 경도
                         val mapCenterCoordLati = responseString?.results?.get(0)?.region?.area1?.coords?.center?.y  // 선택한 지역 중심지 위도
                         indexOfLocationArray = locationArray.indexOf(mapString)
@@ -220,86 +210,6 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000   // 위치 요청 허가 값
     }
 
-    inner class NetworkThread: Thread(){    // 스레드에서 코로나19 데이터를 공공데이터 api를 사용해서 읽어옴
-        @RequiresApi(Build.VERSION_CODES.O)
-        override fun run() {
-            try {
-
-                // 접속할 페이지의 주소
-                val site = "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"
-                val url = URL(site)
-                val conn = url.openConnection()
-                conn.setRequestProperty("serviceKey", "C/53dRPVlGwdFgAwBz0uNqX/B5COnUkL9cRSvJ01NqdIejOQZaHm/Ch30E5AnXC3DnhSI17+64HJa57wiJNvKg==")
-                val input = conn.getInputStream()
-
-                val factory = DocumentBuilderFactory.newInstance()
-                val builder = factory.newDocumentBuilder()
-                // doc: xml문서를 모두 읽어와서 분석을 끝냄
-                val doc = builder.parse(input)
-
-                // root: xml 문서의 모든 데이터들을 갖고 있는 객체
-                val root = doc.documentElement
-
-                // xml 문서에서 태그 이름이 item인 태그들이 item_node_list에 리스트로 담김
-                val itemNodeList = root.getElementsByTagName("item")
-
-                // item_node_list에 들어있는 태그 객체 수만큼 반복함
-                for (name in covidLocationArray) {
-                    for(i in 0 until itemNodeList.length){
-                        // i번째 태그 객체를 item_element에 넣음
-                        val itemElement = itemNodeList.item(i) as Element
-
-                        // item태그 객체에서 원하는 데이터를 태그이름을 이용해서 데이터를 가져옴
-                        // xml 문서는 태그 이름으로 데이터를 가져오면 무조건 리스트로 나옴
-                        val gubunList = itemElement.getElementsByTagName("gubun")
-                        val gubunNode = gubunList.item(0) as Element
-                        val gubun = gubunNode.textContent
-
-                        if (gubun == name) {
-                            val defcntList = itemElement.getElementsByTagName("defCnt")
-                            val defcntNode = defcntList.item(0) as Element
-                            val defCnt = defcntNode.textContent
-
-                            val deathcntList = itemElement.getElementsByTagName("deathCnt")
-                            val deathcntNode = deathcntList.item(0) as Element
-                            val deathCnt = deathcntNode.textContent
-
-                            val incdecList = itemElement.getElementsByTagName("incDec")
-                            val incdecNode = incdecList.item(0) as Element
-                            val incDec = incdecNode.textContent
-
-                            val isolingcntList = itemElement.getElementsByTagName("isolIngCnt")
-                            val isolingcntNode = isolingcntList.item(0) as Element
-                            val isolIngCnt = isolingcntNode.textContent
-
-                            val outsideList = itemElement.getElementsByTagName("overFlowCnt")
-                            val outsideNode = outsideList.item(0) as Element
-                            val outside = outsideNode.textContent
-
-                            val insideList = itemElement.getElementsByTagName("localOccCnt")
-                            val insideNode = insideList.item(0) as Element
-                            val inside = insideNode.textContent
-
-                            runOnUiThread {
-                                val inputCovidArray : ArrayList<String> = arrayListOf()
-                                inputCovidArray.add(defCnt)
-                                inputCovidArray.add(inside)
-                                inputCovidArray.add(outside)
-                                inputCovidArray.add(incDec)
-                                inputCovidArray.add(isolIngCnt)
-                                inputCovidArray.add(deathCnt)
-                                covidNumberArray.add(inputCovidArray)
-                            }
-                            break
-                        }
-
-                    }
-                }
-            }catch (e: Exception){
-                e.printStackTrace()
-            }
-        }
-    }
 
     inner class MakeLocationArrayThread : Thread() {    // 스레드에서 행정구역의 좌표를 배열에 넣어 줌
         override fun run() {
