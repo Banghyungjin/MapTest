@@ -157,8 +157,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                                     "\n${returnDateString()} 확진자 증가량 : \n내부발병 ${covidInfo[1]}명" +
                                     " + 외부유입 ${covidInfo[2]}명 = " +
                                     "총 ${covidInfo[3]}명" +
-                                    "\n${returnDateString()} 격리자 : ${covidInfo[4]}명" +
-                                    "\n${returnDateString()} 사망자  : ${covidInfo[5]}명"
+                                    "\n현재 격리자 : ${covidInfo[4]}명" +
+                                    "\n총 사망자  : ${covidInfo[5]}명"
                             marker.subCaptionColor = Color.DKGRAY
                             marker.subCaptionTextSize = 17f
                             marker.isHideCollidedSymbols = true
@@ -239,8 +239,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         "\n${returnDateString()} 확진자 증가량 : \n내부발병 ${covidNumberArray[covidNumberArray.size - 1][1]}명" +
                         " + 외부유입 ${covidNumberArray[covidNumberArray.size - 1][2]}명 = " +
                         "총 ${covidNumberArray[covidNumberArray.size - 1][3]}명" +
-                        "\n${returnDateString()} 격리자 : ${covidNumberArray[covidNumberArray.size - 1][4]}명" +
-                        "\n${returnDateString()} 사망자  : ${covidNumberArray[covidNumberArray.size - 1][5]}명"
+                        "\n현재 격리자 : ${covidNumberArray[covidNumberArray.size - 1][4]}명" +
+                        "\n총 사망자  : ${covidNumberArray[covidNumberArray.size - 1][5]}명"
                 marker.subCaptionColor = Color.DKGRAY
                 marker.subCaptionTextSize = 17f
                 marker.isHideCollidedSymbols = true
