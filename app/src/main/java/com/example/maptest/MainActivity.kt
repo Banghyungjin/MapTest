@@ -18,24 +18,24 @@ import java.time.format.DateTimeFormatter
 import javax.xml.parsers.DocumentBuilderFactory
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {  // 초기 화면 액티비티
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val mobile : Button = findViewById(R.id.mobileMap)
+        val mobile : Button = findViewById(R.id.mobileMap)  // 광역시도 구별 맵을 불러오는 버튼
         mobile.setOnClickListener {
             val nextIntent = Intent(this, MobileMapActivity::class.java)
             startActivity(nextIntent)
         }
-        val web : Button = findViewById(R.id.webMap)
+        val web : Button = findViewById(R.id.webMap)    // 네이버 web map api를 사용하는 버튼
         web.setOnClickListener {
             val nextIntent2 = Intent(this, WebMapActivity::class.java)
             startActivity(nextIntent2)
         }
 
-        val test : Button = findViewById(R.id.testMap)
+        val test : Button = findViewById(R.id.testMap)  // 코로나 맵을 불러오는 버튼
         test.setOnClickListener {
 
             val nextIntent3 = Intent(this, MobileMapActivityTest::class.java)

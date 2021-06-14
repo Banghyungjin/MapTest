@@ -116,8 +116,8 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
             false
         }
         fun returnLocation(coord : LatLng){
-            var responseString: ResultGetLocationJson?
-            val retrofit = Retrofit.Builder()
+            var responseString: ResultGetLocationJson?      // reversegeocoding api에서 값을 받아올 변수
+            val retrofit = Retrofit.Builder()               // retrofit http 통신
                 .baseUrl(BASE_URL_NAVER_API)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -144,10 +144,10 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         } else if (covidInfo[0].toInt() > 1000) {
                             1
                         } else {
-                            0;
+                            0
                         }
 
-
+                        // 마커 설정 및 출력 코드
                         if (mapCenterCoordLati != null && mapCenterCoordLongi != null) {    // 선택한 지역의 중심 좌표에 마커를 생성
                             marker.position = LatLng(mapCenterCoordLati.toDouble(),mapCenterCoordLongi.toDouble())  // 마커 위경도 설정
                             marker.captionText = "$mapString"   // 마커 텍스트 설정
@@ -166,8 +166,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                             marker.iconTintColor = lineColorArray[counter]
                             marker.map = naverMap               // 마커 표시
                         }
-
-                        //Log.d("결과", "인덱스 : $indexOfLocationArray")
+                        //폴리곤 설정 및 출력 코드
                         for (i in multiPolygonArray[indexOfLocationArray]) {
                             i.color = colorArray[counter]  // 폴리곤 내부 색깔 설정
                             i.outlineColor = lineColorArray[counter]  // 폴리곤 외곽선 색깔 설정
@@ -222,7 +221,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                     } else if (covidNumberArray[m][0].toInt() > 1000) {
                         1
                     } else {
-                        0;
+                        0
                     }
                     for (i in multiPolygonArray[m]) {
                         i.color = colorArray[counter]  // 폴리곤 내부 색깔 설정
@@ -231,6 +230,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         i.map = naverMap    // 폴리곤 표시
                     }
                 }
+                // 마커 설정 및 출력 코드
                 marker.position = LatLng(37.0,127.8)  // 마커 위경도 설정
                 marker.captionText = "전국"   // 마커 텍스트 설정
                 marker.setCaptionAligns(Align.Top)  // 마커 텍스트 위치
@@ -270,7 +270,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
     inner class NetworkThread: Thread(){    // 스레드에서 코로나19 데이터를 공공데이터 api를 사용해서 읽어옴
         @SuppressLint("SimpleDateFormat")
         @RequiresApi(Build.VERSION_CODES.O)
-        override fun run() {
+        override fun run() {    // 날짜에 따른 코로나 19데이터를 읽어옴(오전에는 아직 당일 데이터가 안올라와서 어제 걸로 읽어옴)
             val calendar = Calendar.getInstance()
             calendar.add(Calendar.DAY_OF_YEAR, -1) //변경하고 싶은 원하는 날짜 수를 넣어 준다.
             val TimeToDate = calendar.time
@@ -286,7 +286,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                     site += "startCreateDt=${finalResultDate}&endCreateDt=${finalResultDate}"
                 }
                 val url = URL(site)
-                val conn = url.openConnection()
+                val conn = url.openConnection() //공공코로나 API 키로 접속
                 conn.setRequestProperty("serviceKey", "C/53dRPVlGwdFgAwBz0uNqX/B5COnUkL9cRSvJ01NqdIejOQZaHm/Ch30E5AnXC3DnhSI17+64HJa57wiJNvKg==")
                 val input = conn.getInputStream()
 
@@ -312,7 +312,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                         val gubunList = itemElement.getElementsByTagName("gubun")
                         val gubunNode = gubunList.item(0) as Element
                         val gubun = gubunNode.textContent
-
+                        // 지역의 코로나 api 데이터 중 앱에 필요한 부분만 빼와서 리스트 형태로 저장
                         if (gubun == name) {
                             val defcntList = itemElement.getElementsByTagName("defCnt")
                             val defcntNode = defcntList.item(0) as Element
@@ -337,7 +337,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
                             val insideList = itemElement.getElementsByTagName("localOccCnt")
                             val insideNode = insideList.item(0) as Element
                             val inside = insideNode.textContent
-
+                            // 리스트를 저장해서 다음에 쓸 수 있게 해줌
                             runOnUiThread {
                                 val inputCovidArray : ArrayList<String> = arrayListOf()
                                 inputCovidArray.add(defCnt)
@@ -433,6 +433,7 @@ class MobileMapActivityTest : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     fun returnDateString() : String {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_YEAR, 0) //변경하고 싶은 원하는 날짜 수를 넣어 준다.

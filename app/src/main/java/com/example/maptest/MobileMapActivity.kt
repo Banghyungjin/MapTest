@@ -34,8 +34,8 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var locationSource: FusedLocationSource    // 주소 받아오는 거
     private lateinit var naverMap: NaverMap                     // 네이버 맵 객체
-    private val CLIENT_ID = "0l2mcc3fx2"
-    private val CLIENT_SECRET = "vRz8M0yRPc1QRNU1KGwcJIDXslLcOSjhmg0t9kfk"
+    private val CLIENT_ID = "0l2mcc3fx2"                        // 네이버 맵 api id
+    private val CLIENT_SECRET = "vRz8M0yRPc1QRNU1KGwcJIDXslLcOSjhmg0t9kfk"  // 네이버 맵 api pw
     private val BASE_URL_NAVER_API = "https://naveropenapi.apigw.ntruss.com/"
 
     // 지도에 그릴 폴리곤 윤곽선 색깔들
@@ -64,7 +64,7 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
         locationSource =    // 로케이션 소스 받아옴
             FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         val fm = supportFragmentManager
-        val mapFragment = fm.findFragmentById(R.id.map) as MapFragment?
+        val mapFragment = fm.findFragmentById(R.id.map) as MapFragment?     // 맵을 화면의 프래그먼트에 추가해줌
             ?: MapFragment.newInstance().also {
                 fm.beginTransaction().add(R.id.map, it).commit()
             }
@@ -105,8 +105,8 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             false
         }
         fun returnLocation(coord : LatLng){
-            var responseString: ResultGetLocationJson?
-            val retrofit = Retrofit.Builder()
+            var responseString: ResultGetLocationJson?  // reversegeocoding api에서 값을 받아올 변수
+            val retrofit = Retrofit.Builder()           // retrofit http 통신
                 .baseUrl(BASE_URL_NAVER_API)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -157,7 +157,7 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
             marker.map = null
 //            counter = 0
             try {
-                returnLocation(coord)   // 이걸로 위에 긴 거 실행
+                returnLocation(coord)   // 이걸로 위에 함수 실행
             }catch (e: Exception){
                 e.printStackTrace()
             }
@@ -174,7 +174,7 @@ class MobileMapActivity : AppCompatActivity(), OnMapReadyCallback {
 //            counter = 0
         }
 
-        val showAll : FloatingActionButton = findViewById(R.id.floatingActionButton)
+        val showAll : FloatingActionButton = findViewById(R.id.floatingActionButton)    // floatingactionbutton 찾아옴
         var showAllcounter = true
         showAll.setOnClickListener {
             marker.map = null
